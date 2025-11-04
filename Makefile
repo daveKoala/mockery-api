@@ -1,4 +1,4 @@
-.PHONY: build run start stop clean test help
+.PHONY: build run start stop clean test help curls
 
 # Default config file
 CONFIG ?= config.json
@@ -74,6 +74,11 @@ clean: stop ## Clean build artifacts and logs
 	@echo "Clean complete"
 
 restart: stop start ## Restart the server
+
+curls: ## Generate ENDPOINTS.md from config file
+	@echo "Generating endpoint documentation from $(CONFIG)..."
+	@go run cmd-generate-curls.go -config $(CONFIG) -output ENDPOINTS.md
+	@echo "✓ ENDPOINTS.md is ready"
 
 dev: ## Run in development mode (auto-reload on config changes - requires fswatch)
 	@command -v fswatch >/dev/null 2>&1 || { echo "fswatch not installed. Install with: brew install fswatch"; exit 1; }

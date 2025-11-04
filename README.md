@@ -62,13 +62,36 @@ go build -o mockery-api
 - `make status` - Check if server is running
 - `make logs` - Tail server logs
 - `make test` - Run basic API tests
+- `make curls` - Generate ENDPOINTS.md from config file
 - `make clean` - Remove binary, logs, and PID file
 
 You can specify a custom config file:
 ```bash
 make run CONFIG=my-config.json
 make start CONFIG=my-config.json
+make curls CONFIG=my-config.json
 ```
+
+### Generate Endpoint Documentation
+
+Automatically generate markdown documentation with curl examples from your config:
+
+```bash
+make curls
+```
+
+This creates `ENDPOINTS.md` with:
+- Clean, readable documentation for all endpoints
+- Path parameters converted to example values
+- Auth requirements clearly marked
+- Copy-paste ready curl commands
+- Example response bodies (collapsible)
+
+The markdown format makes it easy to:
+- Read in any editor or on GitHub
+- Convert to other formats (Postman, HTTP files, etc.)
+- Share with your team
+- Commit as API documentation
 
 ## Configuration Format
 
@@ -105,7 +128,9 @@ The configuration file uses a simple JSON structure:
 - `port` (required): Port number to run the server on
 
 #### Route
-- `path` (required): Exact path to match (e.g., `/api/users`)
+- `path` (required): Path to match. Supports path parameters using `{paramName}` syntax
+  - Static: `/api/users`
+  - With parameters: `/api/products/{id}` or `/api/orders/{orderId}/items/{itemId}`
 - `method` (required): HTTP method (GET, POST, PUT, DELETE, PATCH, HEAD)
 - `requiresAuth` (optional): Whether to check for auth header (default: false)
 - `authHeader` (optional): Name of the auth header to check (required if `requiresAuth` is true)
@@ -115,6 +140,39 @@ The configuration file uses a simple JSON structure:
 - `status` (required): HTTP status code to return
 - `headers` (optional): Custom response headers
 - `body` (optional): JSON response body (can be null for 204 responses)
+
+### Path Parameters
+
+Path parameters allow you to define a single route that matches multiple URLs. Use `{paramName}` syntax:
+
+```json
+{
+  "path": "/api/products/{id}",
+  "method": "GET",
+  "response": {
+    "status": 200,
+    "body": {
+      "id": 101,
+      "name": "Product"
+    }
+  }
+}
+```
+
+This route will match:
+- `/api/products/101`
+- `/api/products/abc`
+- `/api/products/xyz123`
+
+You can use multiple parameters:
+```json
+{
+  "path": "/api/orders/{orderId}/items/{itemId}",
+  "method": "GET"
+}
+```
+
+**Note:** Path parameter values are not currently extracted or used in responses. The same static response is returned regardless of the parameter value. This is perfect for development where you just need to avoid hitting expensive APIs.
 
 ## Examples
 
@@ -136,8 +194,19 @@ curl -H "Authorization: Bearer token123" http://localhost:3000/api/users
 # POST with auth
 curl -X POST -H "Authorization: Bearer token123" http://localhost:3000/api/users
 
-# PUT with auth
-curl -X PUT -H "Authorization: Bearer token123" http://localhost:3000/api/products/101
+# GET with path parameter (matches /api/products/{id})
+curl http://localhost:3000/api/products/101
+curl http://localhost:3000/api/products/202
+curl http://localhost:3000/api/products/anything
+
+# GET user by ID with auth (matches /api/users/{userId})
+curl -H "Authorization: Bearer token" http://localhost:3000/api/users/123
+
+# PUT with path parameter and auth
+curl -X PUT -H "Authorization: Bearer token123" http://localhost:3000/api/products/999
+
+# Multiple path parameters (matches /api/orders/{orderId}/items/{itemId})
+curl -H "Authorization: Bearer token" http://localhost:3000/api/orders/12345/items/67890
 
 # PATCH with custom auth header
 curl -X PATCH -H "X-API-Key: mykey" http://localhost:3000/api/settings

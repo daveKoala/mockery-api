@@ -17,6 +17,7 @@ go.work
 # Makefile artifacts
 server.log
 server.pid
+ENDPOINTS.md
 
 # IDE
 .vscode/

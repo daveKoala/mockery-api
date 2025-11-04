@@ -66,7 +66,7 @@
       }
     },
     {
-      "path": "/api/products/101",
+      "path": "/api/products/{id}",
       "method": "GET",
       "requiresAuth": false,
       "response": {
@@ -81,7 +81,22 @@
       }
     },
     {
-      "path": "/api/products/101",
+      "path": "/api/users/{userId}",
+      "method": "GET",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 1,
+          "name": "John Doe",
+          "email": "john@example.com",
+          "role": "admin"
+        }
+      }
+    },
+    {
+      "path": "/api/products/{id}",
       "method": "PUT",
       "requiresAuth": true,
       "authHeader": "Authorization",
@@ -96,13 +111,29 @@
       }
     },
     {
-      "path": "/api/products/101",
+      "path": "/api/products/{id}",
       "method": "DELETE",
       "requiresAuth": true,
       "authHeader": "Authorization",
       "response": {
         "status": 204,
         "body": null
+      }
+    },
+    {
+      "path": "/api/orders/{orderId}/items/{itemId}",
+      "method": "GET",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 200,
+        "body": {
+          "orderId": "12345",
+          "itemId": "67890",
+          "productName": "Laptop",
+          "quantity": 1,
+          "price": 999.99
+        }
       }
     },
     {
