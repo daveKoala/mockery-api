@@ -1,0 +1,135 @@
+{
+  "server": {
+    "port": 3000
+  },
+  "routes": [
+    {
+      "path": "/api/users",
+      "method": "GET",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 200,
+        "body": {
+          "users": [
+            {
+              "id": 1,
+              "name": "John Doe",
+              "email": "john@example.com"
+            },
+            {
+              "id": 2,
+              "name": "Jane Smith",
+              "email": "jane@example.com"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/users",
+      "method": "POST",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 201,
+        "body": {
+          "id": 3,
+          "name": "New User",
+          "email": "newuser@example.com",
+          "message": "User created successfully"
+        }
+      }
+    },
+    {
+      "path": "/api/products",
+      "method": "GET",
+      "requiresAuth": false,
+      "response": {
+        "status": 200,
+        "body": {
+          "products": [
+            {
+              "id": 101,
+              "name": "Laptop",
+              "price": 999.99,
+              "inStock": true
+            },
+            {
+              "id": 102,
+              "name": "Mouse",
+              "price": 29.99,
+              "inStock": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/products/101",
+      "method": "GET",
+      "requiresAuth": false,
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 101,
+          "name": "Laptop",
+          "price": 999.99,
+          "description": "High-performance laptop",
+          "inStock": true
+        }
+      }
+    },
+    {
+      "path": "/api/products/101",
+      "method": "PUT",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 101,
+          "name": "Laptop",
+          "price": 899.99,
+          "message": "Product updated successfully"
+        }
+      }
+    },
+    {
+      "path": "/api/products/101",
+      "method": "DELETE",
+      "requiresAuth": true,
+      "authHeader": "Authorization",
+      "response": {
+        "status": 204,
+        "body": null
+      }
+    },
+    {
+      "path": "/api/status",
+      "method": "HEAD",
+      "requiresAuth": false,
+      "response": {
+        "status": 200,
+        "headers": {
+          "X-API-Version": "1.0.0",
+          "X-Rate-Limit": "100"
+        },
+        "body": null
+      }
+    },
+    {
+      "path": "/api/settings",
+      "method": "PATCH",
+      "requiresAuth": true,
+      "authHeader": "X-API-Key",
+      "response": {
+        "status": 200,
+        "body": {
+          "message": "Settings updated",
+          "updatedFields": ["theme", "notifications"]
+        }
+      }
+    }
+  ]
+}
